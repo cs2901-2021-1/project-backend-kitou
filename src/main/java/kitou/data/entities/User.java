@@ -20,6 +20,17 @@ public class User{
     @Column(name = "role", columnDefinition = "integer default 1")
     private Integer role;
 
+    public User(){
+        this.role = 1;
+    }
+
+    public User(String username, String password){
+        this.username = username;
+        this.password = password;
+        this.role = 1;
+        if(this.username.equals("admin"))
+            role = 2;
+    }
 
     public Long getId() {
         return id;
@@ -33,6 +44,7 @@ public class User{
         return password;
     }
 
+    /** 0 = Privilegios removidos, 1 = Privelegio de accesos, 2 = Privilegios de administrador */
     public Integer getRole() {
         return role;
     }
@@ -53,5 +65,15 @@ public class User{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void promote(){
+        if(this.role < 2)
+            this.role++;
+    }
+
+    public void demote(){
+        if(this.role > 0)
+            this.role--;
     }
 }
