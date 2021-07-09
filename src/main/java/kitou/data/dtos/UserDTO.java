@@ -1,14 +1,10 @@
 package kitou.data.dtos;
 
 public class UserDTO{
-    Long id;
+
     String username;
     String password;
     Integer role;
-
-    public Long getId() {
-        return id;
-    }
 
     public String getUsername() {
         return username;
@@ -25,10 +21,21 @@ public class UserDTO{
     @Override
     public String toString() {
         return "UserDTO{" +
-                "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
                 '}';
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
     }
 }
