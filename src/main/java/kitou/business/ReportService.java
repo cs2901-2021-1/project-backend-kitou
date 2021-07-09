@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 @Service
 public class ReportService {
 
-    static final Logger logger = Logger.getLogger(ConditionService.class.getName());
+    static final Logger logger = Logger.getLogger(ReportService.class.getName());
 
     public void generateReport(){
 
