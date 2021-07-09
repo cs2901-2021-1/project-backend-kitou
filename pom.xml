@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>kitou</groupId>
-	<artifactId>pcm</artifactId>
+	<artifactId>project-backend-kitou</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>project-backend-kitou</name>
 	<description>Proyecto Final Kitou</description>
