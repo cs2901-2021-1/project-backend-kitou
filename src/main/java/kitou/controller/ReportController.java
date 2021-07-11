@@ -1,9 +1,9 @@
 package kitou.controller;
 
 import kitou.business.ReportService;
+import kitou.data.dtos.ConditionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
@@ -16,11 +16,13 @@ public class ReportController {
     @Autowired
     ReportService reportService;
 
-    public void generateReport(){
-        reportService.generateReport();
+    @GetMapping("/report")
+    public String generateReport(){
+        return reportService.generateReport();
     }
 
-    public void generateReport(String malla, String carrera, String ciclo){
-        reportService.generateReport(malla, carrera, ciclo);
+    @PostMapping("/report")
+    public String generateReport(@RequestBody ConditionDTO conditionDTO){
+        return reportService.generateReport(conditionDTO);
     }
 }
