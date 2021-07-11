@@ -25,50 +25,61 @@ public class UserService{
         }
     }
 
-    public User auth(UserDTO userDTO){
+    public User auth(UserDTO userDTO) throws IllegalArgumentException{
         var user = validateUser(userDTO.getUsername());
         if(user.getPassword().equals(userDTO.getPassword())){
-            logger.info(user.toString());
             return user;
         }else{
-            logger.info("Contraseña incorrecta.");
-            return null;
+            throw new IllegalArgumentException("Contraseña incorrecta.");
         }
     }
 
-    public User createUser(UserDTO userDTO){
+    public String login(UserDTO userDTO){
+        try{
+            var user = auth(userDTO);
+            return "{\"success\": true, \"username\":\""+user.getUsername()+"\"}";
+        }catch (IllegalArgumentException e){
+            return "{\"success\": false, \"username\": null}";
+        }
+    }
+
+    public String createUser(UserDTO userDTO){
         if(userRepository.findUserByUsername(userDTO.getUsername()) == null){
             var user = new User(userDTO.getUsername(),userDTO.getPassword());
             userRepository.save(user);
-            logger.info(user.toString());
-            return user;
+            logger.info("Usuario creado con éxito.");
+            return "{\"success\": true}";
         }else{
             logger.info("Ya existe un usuario con ese nombre.");
-            return null;
+            return "{\"success\": false}";
         }
     }
 
-    public void promoteUser(String username, UserDTO adminDTO){
-        var admin = validateUser(adminDTO.getUsername());
-        if(admin.getPassword().equals(adminDTO.getPassword()) & (admin.getRole()==2)){
+    public String promoteUser(String username, UserDTO adminDTO){
+        var admin = auth(adminDTO);
+        if(admin.getRole()==2){
             var user = validateUser(username);
             user.promote();
             userRepository.save(user);
             logger.info("Promoción realizada");
+            return "{\"success\": true}";
         }else{
             logger.info("Faltan permisos para ejecutar esta acción.");
+            return "{\"success\": false}";
         }
     }
 
-    public void demoteUser(String username, UserDTO adminDTO){
-        var admin = validateUser(adminDTO.getUsername());
-        if(admin.getPassword().equals(adminDTO.getPassword()) & (admin.getRole()==2)){
+    public String demoteUser(String username, UserDTO adminDTO){
+        var admin = auth(adminDTO);
+        if(admin.getRole()==2){
             var user = validateUser(username);
             user.demote();
             userRepository.save(user);
             logger.info("Democión realizada");
+            return "{\"success\": true}";
         }else{
             logger.info("Faltan permisos para ejecutar esta acción.");
+            return "{\"success\": false}";
         }
     }
 }

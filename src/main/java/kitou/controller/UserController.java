@@ -4,10 +4,7 @@ import kitou.business.UserService;
 import kitou.data.dtos.UserDTO;
 import kitou.data.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
@@ -22,22 +19,26 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public User auth(@RequestBody UserDTO userDTO){
-        return userService.auth(userDTO);
+    @ResponseBody
+    public String login(@RequestBody UserDTO userDTO){
+        return userService.login(userDTO);
     }
 
     @PostMapping("/register")
-    public User createUser(@RequestBody UserDTO userDTO){
+    @ResponseBody
+    public String createUser(@RequestBody UserDTO userDTO){
         return userService.createUser(userDTO);
     }
 
     @PostMapping("/mod/promote/{username}")
-    public void promote(@PathVariable String username, @RequestBody UserDTO adminDTO){
-        userService.promoteUser(username, adminDTO);
+    @ResponseBody
+    public String promote(@PathVariable String username, @RequestBody UserDTO adminDTO){
+        return userService.promoteUser(username, adminDTO);
     }
 
     @PostMapping("/mod/demote/{username}")
-    public void demote(@PathVariable String username, @RequestBody UserDTO adminDTO){
-        userService.demoteUser(username, adminDTO);
+    @ResponseBody
+    public String demote(@PathVariable String username, @RequestBody UserDTO adminDTO){
+        return userService.demoteUser(username, adminDTO);
     }
 }
