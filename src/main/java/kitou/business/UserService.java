@@ -38,8 +38,11 @@ public class UserService{
 
     public String createUser(UserDTO userDTO){
         if(userRepository.findUserByEmail(userDTO.getEmail()) == null){
-            var user = new User(userDTO.getEmail());
+            var user = new User();
+            user.setRole(userDTO.getRole());
+            user.setEmail(userDTO.getEmail());
             userRepository.save(user);
+            logger.info(user.toString());
             logger.info("Usuario creado con éxito.");
             return "{\"success\": true}";
         }else{

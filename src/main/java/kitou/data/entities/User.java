@@ -30,6 +30,10 @@ public class User{
             role = 2;
     }
 
+    public void setRole(Integer role) {
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }
