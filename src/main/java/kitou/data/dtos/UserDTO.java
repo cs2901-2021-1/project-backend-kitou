@@ -2,16 +2,11 @@ package kitou.data.dtos;
 
 public class UserDTO{
 
-    String username;
-    String password;
+    String email;
     Integer role;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
+    public String getEmail() {
+        return email;
     }
 
     public Integer getRole() {
@@ -21,18 +16,13 @@ public class UserDTO{
     @Override
     public String toString() {
         return "UserDTO{" +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 ", role=" + role +
                 '}';
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setRole(Integer role) {

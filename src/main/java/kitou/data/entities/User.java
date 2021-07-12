@@ -1,5 +1,7 @@
 package kitou.data.entities;
 
+import kitou.config.ConstConfig;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,11 +13,8 @@ public class User{
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username", unique = true, nullable = false)
-    private String username;
-
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
 
     @Column(name = "role", columnDefinition = "integer default 1")
     private Integer role;
@@ -24,11 +23,10 @@ public class User{
         this.role = 1;
     }
 
-    public User(String username, String password){
-        this.username = username;
-        this.password = password;
+    public User(String email){
+        this.email = email;
         this.role = 1;
-        if(this.username.equals("admin"))
+        if(this.email.equals(ConstConfig.ADMIN_EMAIL))
             role = 2;
     }
 
@@ -36,12 +34,8 @@ public class User{
         return id;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
+    public String getEmail() {
+        return email;
     }
 
     /** 0 = Privilegios removidos, 1 = Privelegio de accesos, 2 = Privilegios de administrador */
@@ -53,18 +47,13 @@ public class User{
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 ", role=" + role +
                 '}';
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void promote(){

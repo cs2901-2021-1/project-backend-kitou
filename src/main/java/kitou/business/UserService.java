@@ -16,8 +16,8 @@ public class UserService{
     @Autowired
     public UserRepository userRepository;
 
-    public User validateUser(String username) throws IllegalArgumentException{
-        var user = userRepository.findUserByUsername(username);
+    public User validateUser(String email) throws IllegalArgumentException{
+        var user = userRepository.findUserByEmail(email);
         if(user != null){
             return user;
         }else{
@@ -25,43 +25,31 @@ public class UserService{
         }
     }
 
-    public User auth(UserDTO userDTO) throws IllegalArgumentException {
-        var user = validateUser(userDTO.getUsername());
-        if (user != null) {
-            return user;
-        }
-        else{
-            throw new IllegalArgumentException("Usuario Denegado");
-        }
-    }
-
-
-
     public String login(UserDTO userDTO){
         try{
-            var user = auth(userDTO);
-            return "{\"success\": true, \"username\":\""+user.getUsername()+"\"}";
+            var user = validateUser(userDTO.getEmail());
+            return "{\"success\": true, \"email\":\""+user.getEmail()+"\"}";
         }catch (IllegalArgumentException e){
-            return "{\"success\": false, \"username\": null}";
+            return "{\"success\": false, \"email\": null}";
         }
     }
 
     public String createUser(UserDTO userDTO){
-        if(userRepository.findUserByUsername(userDTO.getUsername()) == null){
-            var user = new User(userDTO.getUsername(),userDTO.getPassword());
+        if(userRepository.findUserByEmail(userDTO.getEmail()) == null){
+            var user = new User(userDTO.getEmail());
             userRepository.save(user);
             logger.info("Usuario creado con éxito.");
             return "{\"success\": true}";
         }else{
-            logger.info("Ya existe un usuario con ese nombre.");
+            logger.info("Ya existe un usuario con ese correo.");
             return "{\"success\": false}";
         }
     }
 
-    public String promoteUser(String username, UserDTO adminDTO){
-        var admin = auth(adminDTO);
+    public String promoteUser(String email, UserDTO adminDTO){
+        var admin = userRepository.findUserByEmail(adminDTO.getEmail());
         if(admin.getRole()==2){
-            var user = validateUser(username);
+            var user = validateUser(email);
             user.promote();
             userRepository.save(user);
             logger.info("Promoción realizada");
@@ -72,10 +60,10 @@ public class UserService{
         }
     }
 
-    public String demoteUser(String username, UserDTO adminDTO){
-        var admin = auth(adminDTO);
+    public String demoteUser(String email, UserDTO adminDTO){
+        var admin = userRepository.findUserByEmail(adminDTO.getEmail());
         if(admin.getRole()==2){
-            var user = validateUser(username);
+            var user = validateUser(email);
             user.demote();
             userRepository.save(user);
             logger.info("Democión realizada");
