@@ -28,7 +28,9 @@ public class UserService{
     public String login(UserDTO userDTO){
         try{
             var user = validateUser(userDTO.getEmail());
-            return "{\"success\": true, \"email\":\""+user.getEmail()+"\"}";
+            var rpta = "{\"success\": true, \"email\":\""+user.getEmail()+"\", \"role\":\"" + user.getRole()+"\"}";
+            logger.info(rpta);
+            return rpta;
         }catch (IllegalArgumentException e){
             return "{\"success\": false, \"email\": null}";
         }
