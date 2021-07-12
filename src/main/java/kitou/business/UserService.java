@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 
 @Service
 public class UserService{
-    private static final String returnt = "{\"success\": true}";
-    private static final String returnf = "{\"success\": false}";
+    private static final String RETURNT = "{\"success\": true}";
+    private static final String RETURNF = "{\"success\": false}";
     static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     @Autowired
@@ -44,10 +44,10 @@ public class UserService{
             user.setEmail(userDTO.getEmail());
             userRepository.save(user);
             logger.info("Usuario creado con éxito.");
-            return returnt;
+            return RETURNT;
         }else{
             logger.info("Ya existe un usuario con ese correo.");
-            return returnf;
+            return RETURNF;
         }
     }
 
@@ -58,10 +58,10 @@ public class UserService{
             user.promote();
             userRepository.save(user);
             logger.info("Promoción realizada");
-            return returnt;
+            return RETURNT;
         }else{
             logger.info("Faltan permisos para ejecutar esta acción.");
-            return returnf;
+            return RETURNF;
         }
     }
 
@@ -72,10 +72,10 @@ public class UserService{
             user.demote();
             userRepository.save(user);
             logger.info("Democión realizada");
-            return returnt;
+            return RETURNT;
         }else{
             logger.info("Faltan permisos para ejecutar esta acción.");
-            return returnf;
+            return RETURNF;
         }
     }
 }
