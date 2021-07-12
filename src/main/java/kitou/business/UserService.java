@@ -25,14 +25,17 @@ public class UserService{
         }
     }
 
-    public User auth(UserDTO userDTO) throws IllegalArgumentException{
+    public User auth(UserDTO userDTO) throws IllegalArgumentException {
         var user = validateUser(userDTO.getUsername());
-        if(user.getPassword().equals(userDTO.getPassword())){
+        if (user != null) {
             return user;
-        }else{
-            throw new IllegalArgumentException("Contraseña incorrecta.");
+        }
+        else{
+            throw new IllegalArgumentException("Usuario Denegado");
         }
     }
+
+
 
     public String login(UserDTO userDTO){
         try{
