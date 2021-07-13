@@ -1,7 +1,5 @@
 package kitou.data.entities;
 
-import kitou.config.ConstConfig;
-
 import javax.persistence.*;
 
 @Entity
@@ -19,15 +17,10 @@ public class User{
     @Column(name = "role", columnDefinition = "integer default 1")
     private Integer role;
 
-    public User(){
-        this.role = 1;
-    }
+    public User(){}
 
     public User(String email){
         this.email = email;
-        this.role = 1;
-        if(this.email.equals(ConstConfig.ADMIN_EMAIL))
-            role = 2;
     }
 
     public void setRole(Integer role) {
@@ -61,12 +54,10 @@ public class User{
     }
 
     public void promote(){
-        if(this.role < 2)
-            this.role++;
+        this.role++;
     }
 
     public void demote(){
-        if(this.role > 0)
-            this.role--;
+        this.role--;
     }
 }

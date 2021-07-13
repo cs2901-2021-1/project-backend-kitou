@@ -1,6 +1,8 @@
 package kitou.business;
 
+import kitou.config.ConstConfig;
 import kitou.data.dtos.UserDTO;
+import kitou.data.dtos.RoleChangeDTO;
 import kitou.data.entities.User;
 import kitou.data.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +12,6 @@ import java.util.logging.Logger;
 
 @Service
 public class UserService{
-    private static final String RETURNT = "{\"success\": true}";
-    private static final String RETURNF = "{\"success\": false}";
     static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     @Autowired
@@ -21,61 +21,62 @@ public class UserService{
         var user = userRepository.findUserByEmail(email);
         if(user != null){
             return user;
-        }else{
-            throw new IllegalArgumentException("Usuario no encontrado.");
         }
+        throw new IllegalArgumentException("Usuario no encontrado.");
     }
 
     public String login(UserDTO userDTO){
         try{
-            var user = validateUser(userDTO.getEmail());
-            var rpta = "{\"success\": true, \"email\":\""+user.getEmail()+"\", \"role\":\"" + user.getRole()+"\"}";
-            logger.info(rpta);
-            return rpta;
+            validateUser(userDTO.getEmail());
+            return ConstConfig.SUCCESS_TRUE;
         }catch (IllegalArgumentException e){
-            return "{\"success\": false, \"email\": null}";
+            return ConstConfig.SUCCESS_FALSE;
         }
     }
 
     public String createUser(UserDTO userDTO){
         if(userRepository.findUserByEmail(userDTO.getEmail()) == null){
-            var user = new User();
-            user.setRole(userDTO.getRole());
-            user.setEmail(userDTO.getEmail());
+            var user = new User(userDTO.getEmail());
+            user.setRole(1);
+            if(user.getEmail().equals(ConstConfig.ADMIN_EMAIL))
+                user.setRole(2);
             userRepository.save(user);
             logger.info("Usuario creado con éxito.");
-            return RETURNT;
-        }else{
-            logger.info("Ya existe un usuario con ese correo.");
-            return RETURNF;
+            return ConstConfig.SUCCESS_TRUE;
         }
+        logger.info("Ya existe un usuario con ese correo.");
+        return ConstConfig.SUCCESS_FALSE;
     }
 
-    public String promoteUser(String email, UserDTO adminDTO){
-        var admin = userRepository.findUserByEmail(adminDTO.getEmail());
+    public String promoteUser(RoleChangeDTO roleChangeDTO){
+        var admin = userRepository.findUserByEmail(roleChangeDTO.getAdminEmail());
         if(admin.getRole()==2){
-            var user = validateUser(email);
+            var user = validateUser(roleChangeDTO.getUserEmail());
+            if(user.getRole() > 1){
+                return ConstConfig.SUCCESS_FALSE;
+            }
             user.promote();
             userRepository.save(user);
             logger.info("Promoción realizada");
-            return RETURNT;
-        }else{
-            logger.info("Faltan permisos para ejecutar esta acción.");
-            return RETURNF;
+            return ConstConfig.SUCCESS_TRUE;
         }
+        logger.info("Faltan permisos para ejecutar esta acción.");
+        return ConstConfig.SUCCESS_FALSE;
     }
 
-    public String demoteUser(String email, UserDTO adminDTO){
-        var admin = userRepository.findUserByEmail(adminDTO.getEmail());
+    public String demoteUser(RoleChangeDTO roleChangeDTO){
+        var admin = userRepository.findUserByEmail(roleChangeDTO.getAdminEmail());
         if(admin.getRole()==2){
-            var user = validateUser(email);
+            var user = validateUser(roleChangeDTO.getUserEmail());
+            if(user.getRole() < 1){
+                return ConstConfig.SUCCESS_FALSE;
+            }
             user.demote();
             userRepository.save(user);
             logger.info("Democión realizada");
-            return RETURNT;
-        }else{
-            logger.info("Faltan permisos para ejecutar esta acción.");
-            return RETURNF;
+            return ConstConfig.SUCCESS_TRUE;
         }
+        logger.info("Faltan permisos para ejecutar esta acción.");
+        return ConstConfig.SUCCESS_FALSE;
     }
 }

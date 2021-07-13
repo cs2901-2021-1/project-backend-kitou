@@ -2,6 +2,7 @@ package kitou.controller;
 
 import kitou.business.UserService;
 import kitou.data.dtos.UserDTO;
+import kitou.data.dtos.RoleChangeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,15 +30,15 @@ public class UserController {
         return userService.createUser(userDTO);
     }
 
-    @PostMapping("/mod/promote/{email}")
+    @PostMapping("/mod/promote")
     @ResponseBody
-    public String promote(@PathVariable String email, @RequestBody UserDTO adminDTO){
-        return userService.promoteUser(email, adminDTO);
+    public String promote(@RequestBody RoleChangeDTO roleChangeDTO){
+        return userService.promoteUser(roleChangeDTO);
     }
 
-    @PostMapping("/mod/demote/{email}")
+    @PostMapping("/mod/demote")
     @ResponseBody
-    public String demote(@PathVariable String email, @RequestBody UserDTO adminDTO){
-        return userService.demoteUser(email, adminDTO);
+    public String demote(@RequestBody RoleChangeDTO roleChangeDTO){
+        return userService.demoteUser(roleChangeDTO);
     }
 }
