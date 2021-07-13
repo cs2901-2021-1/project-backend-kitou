@@ -1,6 +1,7 @@
 package kitou.controller;
 
 import kitou.business.UserService;
+import kitou.config.ConstConfig;
 import kitou.data.dtos.UserDTO;
 import kitou.data.dtos.RoleChangeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
-@CrossOrigin("*")
+@CrossOrigin(origins = ConstConfig.FRONT_URI)
 @RestController
 public class UserController {
 

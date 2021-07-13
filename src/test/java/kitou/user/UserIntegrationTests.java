@@ -52,13 +52,11 @@ class UserIntegrationTests {
 
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ConstConfig.ADMIN_EMAIL+"\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_TRUE));
+                .content("{\"email\": \""+ConstConfig.ADMIN_EMAIL+"\"}"));
 
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_TRUE));
+                .content("{\"email\": \"test.user@utec.edu.pe\"}"));
 
         assertNotNull(userService.validateUser("test.user@utec.edu.pe"));
         assertThrows(IllegalArgumentException.class,()->userService.validateUser("test.BADuser@utec.edu.pe"));
