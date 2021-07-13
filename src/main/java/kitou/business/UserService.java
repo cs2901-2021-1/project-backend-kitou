@@ -36,7 +36,8 @@ public class UserService{
 
     public String createUser(UserDTO userDTO){
         if(userRepository.findUserByEmail(userDTO.getEmail()) == null){
-            var user = new User(userDTO.getEmail());
+            var user = new User();
+            user.setEmail(userDTO.getEmail());
             user.setRole(1);
             if(user.getEmail().equals(ConstConfig.ADMIN_EMAIL))
                 user.setRole(2);

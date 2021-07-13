@@ -19,12 +19,4 @@ public class RoleChangeDTO {
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
-
-    @Override
-    public String toString() {
-        return "roleChangeDTO{" +
-                "adminEmail='" + adminEmail + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                '}';
-    }
 }

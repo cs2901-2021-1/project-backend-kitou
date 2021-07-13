@@ -17,9 +17,7 @@ public class User{
     @Column(name = "role", columnDefinition = "integer default 1")
     private Integer role;
 
-    public User(){}
-
-    public User(String email){
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -38,19 +36,6 @@ public class User{
     /** 0 = Privilegios removidos, 1 = Privelegio de accesos, 2 = Privilegios de administrador */
     public Integer getRole() {
         return role;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", role=" + role +
-                '}';
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void promote(){

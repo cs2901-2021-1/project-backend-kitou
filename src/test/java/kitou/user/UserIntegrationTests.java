@@ -84,5 +84,17 @@ class UserIntegrationTests {
                 .content("{\"adminEmail\": \""+ConstConfig.ADMIN_EMAIL+"\", " +
                         "\n\"userEmail\": \""+ConstConfig.ADMIN_EMAIL+"\"}"))
                 .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
+
+        mvc.perform(post("/mod/promote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"adminEmail\": \"test.user@utec.edu.pe\", " +
+                        "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
+                .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
+
+        mvc.perform(post("/mod/demote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"adminEmail\": \"test.user@utec.edu.pe\", " +
+                        "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
+                .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
     }
 }
