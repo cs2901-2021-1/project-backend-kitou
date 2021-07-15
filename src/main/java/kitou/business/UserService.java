@@ -43,8 +43,8 @@ public class UserService{
     public String login(String accessToken, UserDTO userDTO){
         try{
             validationService.validateToken(accessToken, userDTO.getEmail());
-            validateUser(userDTO.getEmail());
-            return ConstantUtil.responseMessage(true,"Sesión iniciada.");
+            var user = validateUser(userDTO.getEmail());
+            return ConstantUtil.responseMessage(true,"Sesión iniciada.","\"role\": "+user.getRole());
         }catch (Exception e){
             return ConstantUtil.responseMessage(false,e.getMessage());
         }

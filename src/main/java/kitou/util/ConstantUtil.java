@@ -14,8 +14,16 @@ public class ConstantUtil {
 
     public static String responseMessage(Boolean success, String message){
         return "{" +
-                "\"success\": "+String.valueOf(success)+
-                "\"message\": "+message+
+                "\"success\": "+success+
+                ", \"message\": \""+message+'\"'+
+                "}";
+    }
+
+    public static String responseMessage(Boolean success, String message, String custom){
+        return "{" +
+                "\"success\": "+success+
+                ", \"message\": \""+message+'\"'+
+                ", "+custom+
                 "}";
     }
 }
