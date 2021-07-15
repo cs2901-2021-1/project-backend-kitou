@@ -1,11 +1,12 @@
 package kitou.business;
 
-import kitou.config.ConstConfig;
+import kitou.util.ConstantUtil;
 import kitou.data.dtos.UserDTO;
-import kitou.data.dtos.RoleChangeDTO;
 import kitou.data.entities.User;
 import kitou.data.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.logging.Logger;
@@ -17,67 +18,90 @@ public class UserService{
     @Autowired
     public UserRepository userRepository;
 
-    public User validateUser(String email) throws IllegalArgumentException{
+    @Autowired
+    public ValidationService validationService;
+
+    public User validateUser(String email) throws UsernameNotFoundException {
         var user = userRepository.findUserByEmail(email);
         if(user != null){
             return user;
         }
-        throw new IllegalArgumentException("Usuario no encontrado.");
+        throw new UsernameNotFoundException("Usuario no encontrado.");
     }
 
-    public String login(UserDTO userDTO){
+    public void validateRole(Integer userRole, Integer role){
+        if(userRole < role){
+            throw new AuthorizationServiceException("No se tiene los suficientes privilegios");
+        }
+    }
+
+    public void validateUniquity(String email){
+        if(userRepository.findUserByEmail(email) != null)
+            throw new IllegalArgumentException("Usuario ya existente");
+    }
+
+    public String login(String accessToken, UserDTO userDTO){
         try{
+            validationService.validateToken(accessToken, userDTO.getEmail());
             validateUser(userDTO.getEmail());
-            return ConstConfig.SUCCESS_TRUE;
-        }catch (IllegalArgumentException e){
-            return ConstConfig.SUCCESS_FALSE;
+            return ConstantUtil.responseMessage(true,"Sesión iniciada.");
+        }catch (Exception e){
+            return ConstantUtil.responseMessage(false,e.getMessage());
         }
     }
 
-    public String createUser(UserDTO userDTO){
-        if(userRepository.findUserByEmail(userDTO.getEmail()) == null){
-            var user = new User();
-            user.setEmail(userDTO.getEmail());
-            user.setRole(1);
-            if(user.getEmail().equals(ConstConfig.ADMIN_EMAIL))
-                user.setRole(2);
-            userRepository.save(user);
-            logger.info("Usuario creado con éxito.");
-            return ConstConfig.SUCCESS_TRUE;
+    public String createUser(String accessToken, UserDTO userDTO){
+        try {
+            validationService.validateToken(accessToken, userDTO.getEmail());
+            var user = validateUser(userDTO.getEmail());
+            validateUniquity(userDTO.getTargetEmail());
+            validateRole(user.getRole(),2);
+
+            var new_user = new User();
+            new_user.setEmail(userDTO.getTargetEmail());
+            new_user.setRole(1);
+            if(new_user.getEmail().equals(ConstantUtil.ADMIN_EMAIL))
+                new_user.setRole(2);
+            userRepository.save(new_user);
+            return ConstantUtil.responseMessage(true,"Usuario creado con éxito.");
+        }catch (Exception e){
+            return ConstantUtil.responseMessage(false,e.getMessage());
         }
-        logger.info("Ya existe un usuario con ese correo.");
-        return ConstConfig.SUCCESS_FALSE;
     }
 
-    public String promoteUser(RoleChangeDTO roleChangeDTO){
-        var admin = userRepository.findUserByEmail(roleChangeDTO.getAdminEmail());
-        if(admin.getRole()==2){
-            var user = validateUser(roleChangeDTO.getUserEmail());
+    public String promoteUser(String accessToken, UserDTO userDTO){
+        try {
+            validationService.validateToken(accessToken, userDTO.getEmail());
+            var user = validateUser(userDTO.getEmail());
+            validateUniquity(userDTO.getTargetEmail());
+            validateRole(user.getRole(),2);
+
             if(user.getRole() > 1){
-                return ConstConfig.SUCCESS_FALSE;
+                return ConstantUtil.responseMessage(false,"No existe un rol superior");
             }
             user.promote();
             userRepository.save(user);
-            logger.info("Promoción realizada");
-            return ConstConfig.SUCCESS_TRUE;
+            return ConstantUtil.responseMessage(true,"Promoción realizada");
+        }catch (Exception e){
+            return ConstantUtil.responseMessage(false,e.getMessage());
         }
-        logger.info("Faltan permisos para ejecutar esta acción.");
-        return ConstConfig.SUCCESS_FALSE;
     }
 
-    public String demoteUser(RoleChangeDTO roleChangeDTO){
-        var admin = userRepository.findUserByEmail(roleChangeDTO.getAdminEmail());
-        if(admin.getRole()==2){
-            var user = validateUser(roleChangeDTO.getUserEmail());
+    public String demoteUser(String accessToken, UserDTO userDTO){
+        try {
+            validationService.validateToken(accessToken, userDTO.getEmail());
+            var user = validateUser(userDTO.getEmail());
+            validateUniquity(userDTO.getTargetEmail());
+            validateRole(user.getRole(),2);
+
             if(user.getRole() < 1){
-                return ConstConfig.SUCCESS_FALSE;
+                return ConstantUtil.responseMessage(false,"No existe un rol inferior");
             }
             user.demote();
             userRepository.save(user);
-            logger.info("Democión realizada");
-            return ConstConfig.SUCCESS_TRUE;
+            return ConstantUtil.responseMessage(true,"Democión realizada");
+        }catch (Exception e){
+            return ConstantUtil.responseMessage(false,e.getMessage());
         }
-        logger.info("Faltan permisos para ejecutar esta acción.");
-        return ConstConfig.SUCCESS_FALSE;
     }
 }

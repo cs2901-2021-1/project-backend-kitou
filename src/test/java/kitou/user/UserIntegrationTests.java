@@ -1,7 +1,7 @@
 package kitou.user;
 
 import kitou.business.UserService;
-import kitou.config.ConstConfig;
+import kitou.util.ConstantUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,27 +24,32 @@ class UserIntegrationTests {
     private UserService userService;
 
     @Test
-    void register_login() throws Exception{
-
+    void register_initial() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_TRUE));
+                .andExpect(content().string(ConstantUtil.responseMessage(true,"Usuario creado con éxito.")));
+    }
+
+    @Test
+    void register_login() throws Exception{
+
+
 
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_TRUE));
+                .andExpect(content().string(ConstantUtil.SUCCESS_TRUE));
 
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
+                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
 
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.BADuser@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
+                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
     }
 
     @Test
@@ -52,7 +57,7 @@ class UserIntegrationTests {
 
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ConstConfig.ADMIN_EMAIL+"\"}"));
+                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\"}"));
 
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -63,38 +68,38 @@ class UserIntegrationTests {
 
         mvc.perform(post("/mod/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \""+ConstConfig.ADMIN_EMAIL+"\", " +
+                .content("{\"adminEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
                         "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_TRUE));
+                .andExpect(content().string(ConstantUtil.SUCCESS_TRUE));
 
         mvc.perform(post("/mod/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \""+ConstConfig.ADMIN_EMAIL+"\", " +
+                .content("{\"adminEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
                         "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
+                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
 
         mvc.perform(post("/mod/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \""+ConstConfig.ADMIN_EMAIL+"\", " +
+                .content("{\"adminEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
                         "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_TRUE));
+                .andExpect(content().string(ConstantUtil.SUCCESS_TRUE));
 
         mvc.perform(post("/mod/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \""+ConstConfig.ADMIN_EMAIL+"\", " +
-                        "\n\"userEmail\": \""+ConstConfig.ADMIN_EMAIL+"\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
+                .content("{\"adminEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
+                        "\n\"userEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\"}"))
+                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
 
         mvc.perform(post("/mod/promote")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"adminEmail\": \"test.user@utec.edu.pe\", " +
                         "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
+                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
 
         mvc.perform(post("/mod/demote")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"adminEmail\": \"test.user@utec.edu.pe\", " +
                         "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstConfig.SUCCESS_FALSE));
+                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
     }
 }
