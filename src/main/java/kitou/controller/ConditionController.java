@@ -17,8 +17,8 @@ public class ConditionController {
 
     @GetMapping("/condition")
     @ResponseBody
-    public String fetchCondition(@RequestHeader(name = "accessToken") String accessToken
+    public String fetchCondition(@RequestHeader(name = "Authorization") String accessToken
             , @RequestBody UserDTO userDTO){
-        return conditionService.fetchCondition(accessToken, userDTO);
+        return conditionService.fetchCondition(accessToken.substring(7), userDTO);
     }
 }

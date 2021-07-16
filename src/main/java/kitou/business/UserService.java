@@ -65,11 +65,11 @@ public class UserService{
                     .validateToken(accessToken, user.getEmail());
 
             if(targetUser.getRole() >= Role.ADMIN.value){
-                return ConstantUtil.responseMessage(false,"No existe un rol superior");
+                return ConstantUtil.responseMessage(false,"No existe un rol superior.");
             }
             targetUser.promote();
             userRepository.save(targetUser);
-            return ConstantUtil.responseMessage(true,"Promoción realizada");
+            return ConstantUtil.responseMessage(true,"Promoción realizada.");
         }catch (Exception e){
             return ConstantUtil.responseMessage(false,e.getMessage());
         }
@@ -83,11 +83,11 @@ public class UserService{
                     .validateToken(accessToken, user.getEmail());
 
             if(targetUser.getRole() <= Role.REVOKED.value){
-                return ConstantUtil.responseMessage(false,"No existe un rol inferior");
+                return ConstantUtil.responseMessage(false,"No existe un rol inferior.");
             }
             targetUser.demote();
             userRepository.save(targetUser);
-            return ConstantUtil.responseMessage(true,"Democión realizada");
+            return ConstantUtil.responseMessage(true,"Democión realizada.");
         }catch (Exception e){
             return ConstantUtil.responseMessage(false,e.getMessage());
         }

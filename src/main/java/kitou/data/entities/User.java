@@ -33,7 +33,6 @@ public class User{
         return email;
     }
 
-    /** 0 = Privilegios removidos, 1 = Privelegio de accesos, 2 = Privilegios de administrador */
     public Integer getRole() {
         return role;
     }

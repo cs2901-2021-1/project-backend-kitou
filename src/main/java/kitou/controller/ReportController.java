@@ -18,15 +18,15 @@ public class ReportController {
     ReportService reportService;
 
     @PostMapping("/report")
-    public String generateReport(@RequestHeader(name = "accessToken") String accessToken
+    public String generateReport(@RequestHeader(name = "Authorization") String accessToken
             , @RequestBody UserDTO userDTO){
-        return reportService.generateReport(accessToken, userDTO);
+        return reportService.generateReport(accessToken.substring(7), userDTO);
     }
 
     @PostMapping("/reportC")
-    public String generateReport(@RequestHeader(name = "accessToken") String accessToken
+    public String generateReport(@RequestHeader(name = "Authorization") String accessToken
             , @RequestBody UserDTO userDTO
             , @RequestBody ConditionDTO conditionDTO){
-        return reportService.generateReport(accessToken, userDTO, conditionDTO);
+        return reportService.generateReport(accessToken.substring(7), userDTO, conditionDTO);
     }
 }

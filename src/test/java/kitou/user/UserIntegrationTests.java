@@ -1,12 +1,14 @@
 package kitou.user;
 
 import kitou.business.UserService;
+import kitou.data.entities.User;
+import kitou.data.repositories.UserRepository;
 import kitou.util.ConstantUtil;
+import kitou.util.Role;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserIntegrationTests {
 
     @Autowired
@@ -27,89 +30,130 @@ class UserIntegrationTests {
     @Autowired
     private UserService userService;
 
-    /*@Test
-    void register_initial() throws Exception{
-        WebDriver driver = new ChromeDriver();
-        System.setProperty("webdriver.chrome.drive", "C:\\chromedriver\\chromedriver.exe");
-        driver.get(ConstantUtil.FRONT_URI);
-        WebElement login=driver.findElement(By.id("signin-button"));
-        login.click();
+    @Autowired
+    private UserRepository userRepository;
 
+    /** Genera un token corriendo la aplicación y luego reemplazas la variable.
+     * Usar el usuario testkitou@gmail.com para generar el token.
+     * Constraseña: q1-w2-e3-r4
+     * Ejemplo: "Bearer ya29.a0Raw... */
+    public final String bearerToken = "Bearer ya29.a0ARrdaM9NteqnQ9NvgBPeKccCB0xw8H4vcxaHtnjojCACV2vUs4I-hNVUJLIf_0PFnYnHjR0nA5e6gNeLSbQ5zEJUhZzua78jZMMsUww1MjGEofwBMIWuwM2hRn1KyMfWQyoKg2D8XwMDs3tr8o91ZwfUwHE3uA";
+
+    @Test
+    @Order(1)
+    void initializeAdmin() throws Exception{
+        var initialUser = new User();
+        initialUser.setEmail(ConstantUtil.ADMIN_EMAIL);
+        initialUser.setRole(Role.ADMIN.value);
+        userRepository.save(initialUser);
+
+        assertNotNull(userRepository.findUserByEmail(ConstantUtil.ADMIN_EMAIL));
+    }
+
+    @Test
+    @Order(2)
+    void register() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \"test.user@utec.edu.pe\"}"))
+                .content("{\"email\": \""+ConstantUtil.ADMIN_EMAIL+"\"" +
+                        ", \"targetEmail\": \"test.user@gmail.com\"}")
+                .header("Authorization",bearerToken))
                 .andExpect(content().string(ConstantUtil.responseMessage(true,"Usuario creado con éxito.")));
     }
 
     @Test
-    void register_login() throws Exception{
-
-
-
-        mvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_TRUE));
-
+    @Order(3)
+    void badDoubleRegister() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
-
-        mvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \"test.BADuser@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
+                .content("{\"email\": \""+ConstantUtil.ADMIN_EMAIL+"\"" +
+                        ", \"targetEmail\": \"test.user@gmail.com\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(ConstantUtil.responseMessage(false,"Usuario ya existente.")));
     }
 
     @Test
-    void promote_demote() throws Exception{
-
+    @Order(4)
+    void badPermission() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\"}"));
+                .content("{\"email\": \"test.user@gmail.com\"" +
+                        ", \"targetEmail\": \"test.user2@gmail.com\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(ConstantUtil.responseMessage(false,"No se tiene los suficientes privilegios.")));
+    }
 
-        mvc.perform(post("/register")
+    @Test
+    @Order(4)
+    void login() throws Exception{
+        mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \"test.user@utec.edu.pe\"}"));
+                .content("{\"email\": \""+ConstantUtil.ADMIN_EMAIL+"\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(ConstantUtil.responseMessage(true,"Sesión iniciada.","\"role\": 2")));
+    }
 
-        assertNotNull(userService.findUser("test.user@utec.edu.pe"));
-        assertThrows(IllegalArgumentException.class,()->userService.findUser("test.BADuser@utec.edu.pe"));
-
-        mvc.perform(post("/mod/demote")
+    @Test
+    @Order(4)
+    void badTokenLogin() throws Exception{
+        mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
-                        "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_TRUE));
+                .content("{\"email\": \""+ConstantUtil.ADMIN_EMAIL+"\"}")
+                .header("Authorization","Bearer badtoken"))
+                .andExpect(content().string(ConstantUtil.responseMessage(false,"Token inválido.")));
+    }
 
-        mvc.perform(post("/mod/demote")
+    @Test
+    @Order(4)
+    void badEmailLogin() throws Exception{
+        mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
-                        "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
+                .content("{\"email\": \"test.user@gmail.com\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(ConstantUtil.responseMessage(false,"Correo inválido.")));
+    }
 
-        mvc.perform(post("/mod/promote")
+    @Test
+    @Order(5)
+    void demote() throws Exception{
+        mvc.perform(post("/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
-                        "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_TRUE));
+                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
+                        "\"targetEmail\": \"test.user@gmail.com\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(ConstantUtil.responseMessage(true,"Democión realizada.")));
+    }
 
-        mvc.perform(post("/mod/promote")
+    @Test
+    @Order(6)
+    void badOverDemote() throws Exception{
+        mvc.perform(post("/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
-                        "\n\"userEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
+                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
+                        "\"targetEmail\": \"test.user@gmail.com\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(ConstantUtil.responseMessage(false,"No existe un rol inferior.")));
+    }
 
-        mvc.perform(post("/mod/promote")
+    @Test
+    @Order(7)
+    void promote() throws Exception{
+        mvc.perform(post("/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \"test.user@utec.edu.pe\", " +
-                        "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
+                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
+                        "\"targetEmail\": \"test.user@gmail.com\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(ConstantUtil.responseMessage(true,"Promoción realizada.")));
+    }
 
-        mvc.perform(post("/mod/demote")
+    @Test
+    @Order(8)
+    void badOverPromote() throws Exception{
+        mvc.perform(post("/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"adminEmail\": \"test.user@utec.edu.pe\", " +
-                        "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
-                .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
-    }*/
+                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
+                        "\"targetEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(ConstantUtil.responseMessage(false,"No existe un rol superior.")));
+    }
 }
