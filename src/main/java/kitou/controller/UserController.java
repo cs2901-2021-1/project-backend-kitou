@@ -31,14 +31,14 @@ public class UserController {
         return userService.createUser(accessToken, userDTO);
     }
 
-    @PostMapping("/mod/promote")
+    @PostMapping("/promote")
     @ResponseBody
     public String promote(@RequestHeader(name = "accessToken") String accessToken
             , @RequestBody UserDTO userDTO){
         return userService.promoteUser(accessToken, userDTO);
     }
 
-    @PostMapping("/mod/demote")
+    @PostMapping("/demote")
     @ResponseBody
     public String demote(@RequestHeader(name = "accessToken") String accessToken
             , @RequestBody UserDTO userDTO){

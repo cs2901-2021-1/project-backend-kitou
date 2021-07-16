@@ -3,6 +3,8 @@ package kitou.user;
 import kitou.business.UserService;
 import kitou.util.ConstantUtil;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,10 @@ class UserIntegrationTests {
 
     @Test
     void register_initial() throws Exception{
+        WebDriver driver = new ChromeDriver();
+        System.setProperty("webdriver.chrome.drive", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe");
+        driver.get(ConstantUtil.FRONT_URI);
+
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.user@utec.edu.pe\"}"))
@@ -63,8 +69,8 @@ class UserIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.user@utec.edu.pe\"}"));
 
-        assertNotNull(userService.validateUser("test.user@utec.edu.pe"));
-        assertThrows(IllegalArgumentException.class,()->userService.validateUser("test.BADuser@utec.edu.pe"));
+        assertNotNull(userService.findUser("test.user@utec.edu.pe"));
+        assertThrows(IllegalArgumentException.class,()->userService.findUser("test.BADuser@utec.edu.pe"));
 
         mvc.perform(post("/mod/demote")
                 .contentType(MediaType.APPLICATION_JSON)

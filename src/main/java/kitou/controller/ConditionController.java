@@ -1,10 +1,9 @@
 package kitou.controller;
 
 import kitou.business.ConditionService;
+import kitou.data.dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
@@ -18,7 +17,8 @@ public class ConditionController {
 
     @GetMapping("/condition")
     @ResponseBody
-    public String fetchCondition(){
-        return conditionService.fetchCondition();
+    public String fetchCondition(@RequestHeader(name = "accessToken") String accessToken
+            , @RequestBody UserDTO userDTO){
+        return conditionService.fetchCondition(accessToken, userDTO);
     }
 }
