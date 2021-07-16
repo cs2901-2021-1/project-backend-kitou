@@ -1,14 +1,14 @@
 package kitou.controller;
 
 import kitou.business.UserService;
-import kitou.util.ConstantUtil;
+import kitou.util.CRest;
 import kitou.data.dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
-@CrossOrigin(origins = ConstantUtil.FRONT_URI)
+@CrossOrigin(origins = CRest.FRONT_URI)
 @RestController
 public class UserController {
 

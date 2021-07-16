@@ -1,6 +1,6 @@
 package kitou.business;
 
-import kitou.util.ConstantUtil;
+import kitou.util.CRest;
 import kitou.data.dtos.UserDTO;
 import kitou.data.entities.User;
 import kitou.data.repositories.UserRepository;
@@ -27,16 +27,16 @@ public class UserService{
         if(user != null){
             return user;
         }
-        throw new UsernameNotFoundException("Usuario no encontrado.");
+            throw new UsernameNotFoundException("Usuario no encontrado.");
     }
 
     public String login(String accessToken, UserDTO userDTO){
         try{
             var user = findUser(userDTO.getEmail());
             validationService.validateToken(accessToken, userDTO.getEmail());
-            return ConstantUtil.responseMessage(true,"Sesión iniciada.","\"role\": "+user.getRole());
+            return CRest.responseMessage(true,"Sesión iniciada.","\"role\": "+user.getRole());
         }catch (Exception e){
-            return ConstantUtil.responseMessage(false,e.getMessage());
+            return CRest.responseMessage(false,e.getMessage());
         }
     }
 
@@ -51,9 +51,9 @@ public class UserService{
             newUser.setEmail(userDTO.getTargetEmail());
             newUser.setRole(Role.STANDARD.value);
             userRepository.save(newUser);
-            return ConstantUtil.responseMessage(true,"Usuario creado con éxito.");
+            return CRest.responseMessage(true,"Usuario creado con éxito.");
         }catch (Exception e){
-            return ConstantUtil.responseMessage(false,e.getMessage());
+            return CRest.responseMessage(false,e.getMessage());
         }
     }
 
@@ -65,13 +65,13 @@ public class UserService{
                     .validateToken(accessToken, user.getEmail());
 
             if(targetUser.getRole() >= Role.ADMIN.value){
-                return ConstantUtil.responseMessage(false,"No existe un rol superior.");
+                return CRest.responseMessage(false,"No existe un rol superior.");
             }
             targetUser.promote();
             userRepository.save(targetUser);
-            return ConstantUtil.responseMessage(true,"Promoción realizada.");
+            return CRest.responseMessage(true,"Promoción realizada.");
         }catch (Exception e){
-            return ConstantUtil.responseMessage(false,e.getMessage());
+            return CRest.responseMessage(false,e.getMessage());
         }
     }
 
@@ -83,13 +83,13 @@ public class UserService{
                     .validateToken(accessToken, user.getEmail());
 
             if(targetUser.getRole() <= Role.REVOKED.value){
-                return ConstantUtil.responseMessage(false,"No existe un rol inferior.");
+                return CRest.responseMessage(false,"No existe un rol inferior.");
             }
             targetUser.demote();
             userRepository.save(targetUser);
-            return ConstantUtil.responseMessage(true,"Democión realizada.");
+            return CRest.responseMessage(true,"Democión realizada.");
         }catch (Exception e){
-            return ConstantUtil.responseMessage(false,e.getMessage());
+            return CRest.responseMessage(false,e.getMessage());
         }
     }
 }

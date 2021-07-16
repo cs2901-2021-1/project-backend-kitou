@@ -3,7 +3,7 @@ package kitou.user;
 import kitou.business.UserService;
 import kitou.data.entities.User;
 import kitou.data.repositories.UserRepository;
-import kitou.util.ConstantUtil;
+import kitou.util.CRest;
 import kitou.util.Role;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -43,11 +43,11 @@ class UserIntegrationTests {
     @Order(1)
     void initializeAdmin() throws Exception{
         var initialUser = new User();
-        initialUser.setEmail(ConstantUtil.ADMIN_EMAIL);
+        initialUser.setEmail(CRest.ADMIN_EMAIL);
         initialUser.setRole(Role.ADMIN.value);
         userRepository.save(initialUser);
 
-        assertNotNull(userRepository.findUserByEmail(ConstantUtil.ADMIN_EMAIL));
+        assertNotNull(userRepository.findUserByEmail(CRest.ADMIN_EMAIL));
     }
 
     @Test
@@ -55,10 +55,10 @@ class UserIntegrationTests {
     void register() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ConstantUtil.ADMIN_EMAIL+"\"" +
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"" +
                         ", \"targetEmail\": \"test.user@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(true,"Usuario creado con éxito.")));
+                .andExpect(content().string(CRest.responseMessage(true,"Usuario creado con éxito.")));
     }
 
     @Test
@@ -66,10 +66,10 @@ class UserIntegrationTests {
     void badDoubleRegister() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ConstantUtil.ADMIN_EMAIL+"\"" +
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"" +
                         ", \"targetEmail\": \"test.user@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(false,"Usuario ya existente.")));
+                .andExpect(content().string(CRest.responseMessage(false,"Usuario ya existente.")));
     }
 
     @Test
@@ -80,7 +80,7 @@ class UserIntegrationTests {
                 .content("{\"email\": \"test.user@gmail.com\"" +
                         ", \"targetEmail\": \"test.user2@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(false,"No se tiene los suficientes privilegios.")));
+                .andExpect(content().string(CRest.responseMessage(false,"No se tiene los suficientes privilegios.")));
     }
 
     @Test
@@ -88,9 +88,9 @@ class UserIntegrationTests {
     void login() throws Exception{
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ConstantUtil.ADMIN_EMAIL+"\"}")
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(true,"Sesión iniciada.","\"role\": 2")));
+                .andExpect(content().string(CRest.responseMessage(true,"Sesión iniciada.","\"role\": 2")));
     }
 
     @Test
@@ -98,9 +98,9 @@ class UserIntegrationTests {
     void badTokenLogin() throws Exception{
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ConstantUtil.ADMIN_EMAIL+"\"}")
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"}")
                 .header("Authorization","Bearer badtoken"))
-                .andExpect(content().string(ConstantUtil.responseMessage(false,"Token inválido.")));
+                .andExpect(content().string(CRest.responseMessage(false,"Token inválido.")));
     }
 
     @Test
@@ -110,7 +110,7 @@ class UserIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.user@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(false,"Correo inválido.")));
+                .andExpect(content().string(CRest.responseMessage(false,"Correo inválido.")));
     }
 
     @Test
@@ -118,10 +118,10 @@ class UserIntegrationTests {
     void demote() throws Exception{
         mvc.perform(post("/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
                         "\"targetEmail\": \"test.user@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(true,"Democión realizada.")));
+                .andExpect(content().string(CRest.responseMessage(true,"Democión realizada.")));
     }
 
     @Test
@@ -129,21 +129,32 @@ class UserIntegrationTests {
     void badOverDemote() throws Exception{
         mvc.perform(post("/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
                         "\"targetEmail\": \"test.user@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(false,"No existe un rol inferior.")));
+                .andExpect(content().string(CRest.responseMessage(false,"No existe un rol inferior.")));
     }
 
+    @Test
+    @Order(6)
+    void badTargetDemote() throws Exception{
+        mvc.perform(post("/demote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
+                        "\"targetEmail\": \"test.baduser@gmail.com\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(CRest.responseMessage(false,"Usuario no encontrado.")));
+    }
+    
     @Test
     @Order(7)
     void promote() throws Exception{
         mvc.perform(post("/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
                         "\"targetEmail\": \"test.user@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(true,"Promoción realizada.")));
+                .andExpect(content().string(CRest.responseMessage(true,"Promoción realizada.")));
     }
 
     @Test
@@ -151,9 +162,20 @@ class UserIntegrationTests {
     void badOverPromote() throws Exception{
         mvc.perform(post("/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ ConstantUtil.ADMIN_EMAIL+"\", " +
-                        "\"targetEmail\": \""+ ConstantUtil.ADMIN_EMAIL+"\"}")
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
+                        "\"targetEmail\": \""+ CRest.ADMIN_EMAIL+"\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(ConstantUtil.responseMessage(false,"No existe un rol superior.")));
+                .andExpect(content().string(CRest.responseMessage(false,"No existe un rol superior.")));
+    }
+
+    @Test
+    @Order(8)
+    void badTargetPromote() throws Exception{
+        mvc.perform(post("/promote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
+                        "\"targetEmail\": \"test.baduser@gmail.com\"}")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(CRest.responseMessage(false,"Usuario no encontrado.")));
     }
 }

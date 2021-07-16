@@ -20,12 +20,4 @@ public class UserDTO {
     public void setTargetEmail(String targetEmail) {
         this.targetEmail = targetEmail;
     }
-
-    @Override
-    public String toString() {
-        return "UserDTO{" +
-                "email='" + email + '\'' +
-                ", targetEmail='" + targetEmail + '\'' +
-                '}';
-    }
 }

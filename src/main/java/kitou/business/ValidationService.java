@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @Service
@@ -26,13 +27,13 @@ public class ValidationService {
         validateRole(user.getRole(), role);
         return this;
     }
+
     public ValidationService validateToken(String accessToken, String email) throws NotFoundException {
         UserDTO request;
         try{
-            request = new RestTemplate()
+            request = Objects.requireNonNull(new RestTemplate()
                     .getForEntity("https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="+accessToken
-                            , UserDTO.class).getBody();
-            assert request != null;
+                            , UserDTO.class).getBody());
         }catch (Exception e){
             throw new NotFoundException("Token inválido.");
         }

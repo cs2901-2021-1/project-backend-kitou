@@ -1,7 +1,7 @@
 package kitou.business;
 
 import kitou.data.dtos.UserDTO;
-import kitou.util.ConstantUtil;
+import kitou.util.CRest;
 import kitou.data.dtos.ConditionDTO;
 import kitou.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +21,18 @@ public class ReportService {
     public String generateReport(String accessToken, UserDTO userDTO){
         try{
             validationService.validateTokenAndRoleUserless(accessToken, userDTO.getEmail(), Role.STANDARD);
-            return new RestTemplate().getForObject(ConstantUtil.PREDICTION_URI,String.class);
+            return new RestTemplate().getForObject(CRest.PREDICTION_URI,String.class);
         }catch (Exception e){
-            return ConstantUtil.responseMessage(false,e.getMessage());
+            return CRest.responseMessage(false,e.getMessage());
         }
     }
 
     public String generateReport(String accessToken, UserDTO userDTO, ConditionDTO conditionDTO){
         try{
             validationService.validateTokenAndRoleUserless(accessToken, userDTO.getEmail(), Role.STANDARD);
-            return new RestTemplate().postForObject(ConstantUtil.PREDICTION_URI,conditionDTO,String.class);
+            return new RestTemplate().postForObject(CRest.PREDICTION_URI,conditionDTO,String.class);
         }catch (Exception e){
-            return ConstantUtil.responseMessage(false,e.getMessage());
+            return CRest.responseMessage(false,e.getMessage());
         }
     }
 }

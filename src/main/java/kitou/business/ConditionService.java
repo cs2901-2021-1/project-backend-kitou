@@ -5,7 +5,7 @@ import kitou.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import kitou.util.ConstantUtil;
+import kitou.util.CRest;
 
 import java.util.logging.Logger;
 
@@ -20,9 +20,9 @@ public class ConditionService{
     public String fetchCondition(String accessToken, UserDTO userDTO){
         try{
             validationService.validateTokenAndRoleUserless(accessToken, userDTO.getEmail(), Role.STANDARD);
-            return new RestTemplate().getForObject(ConstantUtil.PREDICTION_URI,String.class);
+            return new RestTemplate().getForObject(CRest.PREDICTION_URI,String.class);
         }catch (Exception e){
-            return ConstantUtil.responseMessage(false,e.getMessage());
+            return CRest.responseMessage(false,e.getMessage());
         }
     }
 }
