@@ -3,7 +3,9 @@ package kitou.user;
 import kitou.business.UserService;
 import kitou.util.ConstantUtil;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,11 +27,13 @@ class UserIntegrationTests {
     @Autowired
     private UserService userService;
 
-    @Test
+    /*@Test
     void register_initial() throws Exception{
         WebDriver driver = new ChromeDriver();
-        System.setProperty("webdriver.chrome.drive", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe");
+        System.setProperty("webdriver.chrome.drive", "C:\\chromedriver\\chromedriver.exe");
         driver.get(ConstantUtil.FRONT_URI);
+        WebElement login=driver.findElement(By.id("signin-button"));
+        login.click();
 
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,5 +111,5 @@ class UserIntegrationTests {
                 .content("{\"adminEmail\": \"test.user@utec.edu.pe\", " +
                         "\n\"userEmail\": \"test.user@utec.edu.pe\"}"))
                 .andExpect(content().string(ConstantUtil.SUCCESS_FALSE));
-    }
+    }*/
 }
