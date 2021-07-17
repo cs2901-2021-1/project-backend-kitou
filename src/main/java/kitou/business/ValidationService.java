@@ -6,7 +6,7 @@ import kitou.data.repositories.UserRepository;
 import kitou.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AuthorizationServiceException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,17 +28,17 @@ public class ValidationService {
         return this;
     }
 
-    public ValidationService validateToken(String accessToken, String email) throws NotFoundException {
+    public ValidationService validateToken(String accessToken, String email){
         UserDTO request;
         try{
             request = Objects.requireNonNull(new RestTemplate()
                     .getForEntity("https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="+accessToken
                             , UserDTO.class).getBody());
         }catch (Exception e){
-            throw new NotFoundException("Credenciales inválidas.");
+            throw new BadCredentialsException("Credenciales inválidas.");
         }
         if(!email.equals(request.getEmail())){
-            throw new UsernameNotFoundException("Credenciales inválidas.");
+            throw new BadCredentialsException("Credenciales inválidas.");
         }
         return this;
     }

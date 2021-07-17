@@ -6,7 +6,7 @@ import kitou.data.entities.User;
 import kitou.data.repositories.UserRepository;
 import kitou.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.util.logging.Logger;
@@ -22,12 +22,12 @@ public class UserService{
     @Autowired
     public ValidationService validationService;
 
-    public User findUser(String email) throws UsernameNotFoundException {
+    public User findUser(String email){
         var user = userRepository.findUserByEmail(email);
         if(user != null){
             return user;
         }
-            throw new UsernameNotFoundException("Credenciales inválidas.");
+            throw new BadCredentialsException("Credenciales inválidas.");
     }
 
     public String login(String accessToken, UserDTO userDTO){
