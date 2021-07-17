@@ -37,7 +37,7 @@ class UserIntegrationTests {
      * Usar el usuario testkitou@gmail.com para generar el token.
      * Constraseña: q1-w2-e3-r4
      * Ejemplo: "Bearer ya29.a0Raw... */
-    public final String bearerToken = "Bearer ya29.a0ARrdaM8dQrO9K6JUbvUvoSOV3LDTr1Ynxwu1V6mLYe8jqHfzn7BPjB2C2hRFpYFn_HaSje0RsrFWK7cKJ5Vulda0X5MG7YPZpACNDaxfrPezxVJy7WUS3xntkX6pqlKktLMek3ybj8CRzkXS8Rx2Rq0HqDukUw";
+    public final String bearerToken = "Bearer ya29.a0ARrdaM_XSlgEnuxOC3uoVxhnWXdb_lzCXalE3PaCkunkGWd3F5dNwcMwmf1dchA90kVSQPM3mjxPqjkcGT2Fyh98FO4Heyb1Q_qJhGVLo-wdU16yRgz3KJrHp4L0LRk0M4Mi5ceFY2p0OI0ZCbitf3ia9S36rw";
 
     @Test
     @Order(1)
@@ -55,8 +55,8 @@ class UserIntegrationTests {
     void register() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"" +
-                        ", \"targetEmail\": \"test.user@gmail.com\"}")
+                .content("{\"email\": \"test.user@gmail.com\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(true,"Usuario creado con éxito.")));
     }
@@ -66,19 +66,19 @@ class UserIntegrationTests {
     void badDoubleRegister() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"" +
-                        ", \"targetEmail\": \"test.user@gmail.com\"}")
+                .content("{\"email\": \"test.user@gmail.com\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"Usuario ya existente.")));
     }
 
     @Test
     @Order(4)
-    void badPermission() throws Exception{
+    void badPermissionRegister() throws Exception{
         mvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \"test.user@gmail.com\"" +
-                        ", \"targetEmail\": \"test.user2@gmail.com\"}")
+                .content("{\"email\": \"test.baduser@gmail.com\"}")
+                .header("UserEmail", "test.user@gmail.com")
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"No se tiene los suficientes privilegios.")));
     }
@@ -88,7 +88,7 @@ class UserIntegrationTests {
     void login() throws Exception{
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(true,"Sesión iniciada.","\"role\": 2")));
     }
@@ -98,7 +98,7 @@ class UserIntegrationTests {
     void badTokenLogin() throws Exception{
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization","Bearer badtoken"))
                 .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
@@ -108,7 +108,7 @@ class UserIntegrationTests {
     void badEmailLogin() throws Exception{
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \"test.user@gmail.com\"}")
+                .header("UserEmail", "test.user@gmail.com")
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
@@ -118,8 +118,8 @@ class UserIntegrationTests {
     void demote() throws Exception{
         mvc.perform(post("/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
-                        "\"targetEmail\": \"test.user@gmail.com\"}")
+                .content("{\"email\": \"test.user@gmail.com\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(true,"Democión realizada.")));
     }
@@ -129,8 +129,8 @@ class UserIntegrationTests {
     void badOverDemote() throws Exception{
         mvc.perform(post("/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
-                        "\"targetEmail\": \"test.user@gmail.com\"}")
+                .content("{\"email\": \"test.user@gmail.com\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"No existe un rol inferior.")));
     }
@@ -140,8 +140,8 @@ class UserIntegrationTests {
     void badTargetDemote() throws Exception{
         mvc.perform(post("/demote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
-                        "\"targetEmail\": \"test.baduser@gmail.com\"}")
+                .content("{\"email\": \"test.baduser@gmail.com\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
@@ -151,8 +151,8 @@ class UserIntegrationTests {
     void promote() throws Exception{
         mvc.perform(post("/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
-                        "\"targetEmail\": \"test.user@gmail.com\"}")
+                .content("{\"email\": \"test.user@gmail.com\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(true,"Promoción realizada.")));
     }
@@ -162,8 +162,8 @@ class UserIntegrationTests {
     void badOverPromote() throws Exception{
         mvc.perform(post("/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
-                        "\"targetEmail\": \""+ CRest.ADMIN_EMAIL+"\"}")
+                .content("{\"email\": \""+CRest.ADMIN_EMAIL+"\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"No existe un rol superior.")));
     }
@@ -173,8 +173,8 @@ class UserIntegrationTests {
     void badTargetPromote() throws Exception{
         mvc.perform(post("/promote")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
-                        "\"targetEmail\": \"test.baduser@gmail.com\"}")
+                .content("{\"email\": \"test.baduser@gmail.com\"}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }

@@ -20,28 +20,31 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     public String login(@RequestHeader(name = "Authorization") String accessToken
-            , @RequestBody UserDTO userDTO){
-        return userService.login(accessToken.substring(7), userDTO);
+            , @RequestHeader(name = "UserEmail") String email){
+        return userService.login(accessToken.substring(7), email);
     }
 
     @PostMapping("/register")
     @ResponseBody
     public String createUser(@RequestHeader(name = "Authorization") String accessToken
+            , @RequestHeader(name = "UserEmail") String email
             , @RequestBody UserDTO userDTO){
-        return userService.createUser(accessToken.substring(7), userDTO);
+        return userService.createUser(accessToken.substring(7), email, userDTO);
     }
 
     @PostMapping("/promote")
     @ResponseBody
     public String promote(@RequestHeader(name = "Authorization") String accessToken
+            , @RequestHeader(name = "UserEmail") String email
             , @RequestBody UserDTO userDTO){
-        return userService.promoteUser(accessToken.substring(7), userDTO);
+        return userService.promoteUser(accessToken.substring(7), email, userDTO);
     }
 
     @PostMapping("/demote")
     @ResponseBody
     public String demote(@RequestHeader(name = "Authorization") String accessToken
+            , @RequestHeader(name = "UserEmail") String email
             , @RequestBody UserDTO userDTO){
-        return userService.demoteUser(accessToken.substring(7), userDTO);
+        return userService.demoteUser(accessToken.substring(7), email, userDTO);
     }
 }

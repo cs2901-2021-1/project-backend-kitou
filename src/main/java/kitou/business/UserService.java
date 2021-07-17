@@ -30,25 +30,25 @@ public class UserService{
             throw new BadCredentialsException("Credenciales inválidas.");
     }
 
-    public String login(String accessToken, UserDTO userDTO){
+    public String login(String accessToken, String email){
         try{
-            var user = findUser(userDTO.getEmail());
-            validationService.validateToken(accessToken, userDTO.getEmail());
+            var user = findUser(email);
+            validationService.validateToken(accessToken, email);
             return CRest.responseMessage(true,"Sesión iniciada.","\"role\": "+user.getRole());
         }catch (Exception e){
             return CRest.responseMessage(false,e.getMessage());
         }
     }
 
-    public String createUser(String accessToken, UserDTO userDTO){
+    public String createUser(String accessToken, String email, UserDTO userDTO){
         try {
-            var user = findUser(userDTO.getEmail());
-            validationService.validateUniqueness(userDTO.getTargetEmail())
+            var user = findUser(email);
+            validationService.validateUniqueness(userDTO.getEmail())
                     .validateRole(user.getRole(),Role.ADMIN)
                     .validateToken(accessToken, user.getEmail());
 
             var newUser = new User();
-            newUser.setEmail(userDTO.getTargetEmail());
+            newUser.setEmail(userDTO.getEmail());
             newUser.setRole(Role.STANDARD.value);
             userRepository.save(newUser);
             return CRest.responseMessage(true,"Usuario creado con éxito.");
@@ -57,10 +57,10 @@ public class UserService{
         }
     }
 
-    public String promoteUser(String accessToken, UserDTO userDTO){
+    public String promoteUser(String accessToken, String email, UserDTO userDTO){
         try {
-            var user = findUser(userDTO.getEmail());
-            var targetUser = findUser(userDTO.getTargetEmail());
+            var user = findUser(email);
+            var targetUser = findUser(userDTO.getEmail());
             validationService.validateRole(user.getRole(),Role.ADMIN)
                     .validateToken(accessToken, user.getEmail());
 
@@ -75,10 +75,10 @@ public class UserService{
         }
     }
 
-    public String demoteUser(String accessToken, UserDTO userDTO){
+    public String demoteUser(String accessToken, String email, UserDTO userDTO){
         try {
-            var user = findUser(userDTO.getEmail());
-            var targetUser = findUser(userDTO.getTargetEmail());
+            var user = findUser(email);
+            var targetUser = findUser(userDTO.getEmail());
             validationService.validateRole(user.getRole(),Role.ADMIN)
                     .validateToken(accessToken, user.getEmail());
 
