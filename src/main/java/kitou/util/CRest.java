@@ -2,7 +2,7 @@ package kitou.util;
 
 public class CRest {
     private CRest() { }
-    public static final String PREDICTION_URI = "https://v2.jokeapi.dev/joke/Any";
+    public static final String PREDICTION_URI = "http://localhost:8000";
     /** Reemplazar por: https://cs.mrg.com.pe/app-sec01-group05/*/
     public static final String FRONT_URI = "http://localhost:3000";
     public static final String ADMIN_EMAIL = "testkitou@gmail.com";

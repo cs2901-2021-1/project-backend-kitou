@@ -21,7 +21,7 @@ public class ReportService {
     public String generateReport(String accessToken, String email){
         try{
             validationService.validateTokenAndRoleUserless(accessToken, email, Role.STANDARD);
-            return new RestTemplate().getForObject(CRest.PREDICTION_URI,String.class);
+            return new RestTemplate().getForObject(CRest.PREDICTION_URI+"/report",String.class);
         }catch (BadCredentialsException b){
             return CRest.responseMessage(false,b.getMessage());
         }catch (Exception u){
@@ -32,7 +32,7 @@ public class ReportService {
     public String generateReport(String accessToken, String email, ConditionDTO conditionDTO){
         try{
             validationService.validateTokenAndRoleUserless(accessToken, email, Role.STANDARD);
-            return new RestTemplate().postForObject(CRest.PREDICTION_URI,conditionDTO,String.class);
+            return new RestTemplate().postForObject(CRest.PREDICTION_URI+"/report",conditionDTO,String.class);
         }catch (BadCredentialsException b){
             return CRest.responseMessage(false,b.getMessage());
         }catch (Exception u){

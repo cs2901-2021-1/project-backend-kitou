@@ -20,7 +20,7 @@ public class ConditionService{
     public String fetchCondition(String accessToken, String email){
         try{
             validationService.validateTokenAndRoleUserless(accessToken, email, Role.STANDARD);
-            return new RestTemplate().getForObject(CRest.PREDICTION_URI+"/route",String.class);
+            return new RestTemplate().getForObject(CRest.PREDICTION_URI+"/condition",String.class);
         }catch (BadCredentialsException b){
             return CRest.responseMessage(false,b.getMessage());
         }catch (Exception u){

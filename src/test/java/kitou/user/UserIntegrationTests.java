@@ -38,7 +38,7 @@ class UserIntegrationTests {
      * Usar el usuario testkitou@gmail.com para generar el token.
      * Constraseña: q1-w2-e3-r4
      * Ejemplo: "Bearer ya29.a0Raw... */
-    public final String bearerToken = "Bearer ya29.a0ARrdaM-dGmgndBxi9p7wphNVC0pKp7E52paCVMuixiLLEyTlIjpg2wQxtb3CnVCY7ymbIye9Uk_QBvFWLVsUmJzHxm89AZcl0-9n2ej-9u5hthctkk3u_9akb_Xma6mvQSILnINctnBfB615qFZpxCwwvxtEoQ";
+    public final String bearerToken = "Bearer ya29.a0ARrdaM9Yrh1JysVYmVVyirMOvwmx_JNWG-jrFaLwfKc1R66RhiITjyGJeukncxW-RtSLErZigpjo74JT84CYD3GAMBRBNY0w9Blc7t23QhnLWKvGdr-XHFWHz3nA21fgDCMwjuV0bDbOr7RJKQWdDjodfT0RAw";
 
     @Test
     @Order(1)
@@ -181,6 +181,16 @@ class UserIntegrationTests {
     }
 
     @Test
+    @Order(9)
+    void condition() throws Exception{
+        mvc.perform(get("/condition")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("UserEmail", CRest.ADMIN_EMAIL)
+                .header("Authorization",bearerToken))
+                .andExpect(content().string("es algo"));
+    }
+
+    @Test
     @Order(10)
     void badPermissionCondition() throws Exception{
         mvc.perform(get("/condition")
@@ -208,6 +218,27 @@ class UserIntegrationTests {
                 .header("UserEmail", "baduser")
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
+    }
+
+    @Test
+    @Order(11)
+    void report() throws Exception{
+        mvc.perform(get("/report")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("UserEmail", CRest.ADMIN_EMAIL)
+                .header("Authorization",bearerToken))
+                .andExpect(content().string("es algo"));
+    }
+
+    @Test
+    @Order(11)
+    void reportCondition() throws Exception{
+        mvc.perform(post("/report")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ciclo\": 1, \"carrera\": \"CS\", \"malla\": 203}")
+                .header("UserEmail", CRest.ADMIN_EMAIL)
+                .header("Authorization",bearerToken))
+                .andExpect(content().string("salio bien"));
     }
 
     @Test
