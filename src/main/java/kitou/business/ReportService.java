@@ -1,6 +1,5 @@
 package kitou.business;
 
-import kitou.data.dtos.UserDTO;
 import kitou.util.CRest;
 import kitou.data.dtos.ConditionDTO;
 import kitou.util.Role;

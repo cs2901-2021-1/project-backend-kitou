@@ -1,6 +1,5 @@
 package kitou.business;
 
-import javassist.NotFoundException;
 import kitou.data.dtos.UserDTO;
 import kitou.data.repositories.UserRepository;
 import kitou.util.Role;

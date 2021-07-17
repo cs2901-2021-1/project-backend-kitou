@@ -1,7 +1,6 @@
 package kitou.controller;
 
 import kitou.business.ConditionService;
-import kitou.data.dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
