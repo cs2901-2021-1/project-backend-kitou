@@ -27,7 +27,7 @@ public class UserService{
         if(user != null){
             return user;
         }
-            throw new UsernameNotFoundException("Usuario no encontrado.");
+            throw new UsernameNotFoundException("Credenciales inválidas.");
     }
 
     public String login(String accessToken, UserDTO userDTO){

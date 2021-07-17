@@ -35,10 +35,10 @@ public class ValidationService {
                     .getForEntity("https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="+accessToken
                             , UserDTO.class).getBody());
         }catch (Exception e){
-            throw new NotFoundException("Token inválido.");
+            throw new NotFoundException("Credenciales inválidas.");
         }
         if(!email.equals(request.getEmail())){
-            throw new UsernameNotFoundException("Correo inválido.");
+            throw new UsernameNotFoundException("Credenciales inválidas.");
         }
         return this;
     }

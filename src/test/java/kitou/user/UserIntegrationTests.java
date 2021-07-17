@@ -37,7 +37,7 @@ class UserIntegrationTests {
      * Usar el usuario testkitou@gmail.com para generar el token.
      * Constraseña: q1-w2-e3-r4
      * Ejemplo: "Bearer ya29.a0Raw... */
-    public final String bearerToken = "Bearer ya29.a0ARrdaM9NteqnQ9NvgBPeKccCB0xw8H4vcxaHtnjojCACV2vUs4I-hNVUJLIf_0PFnYnHjR0nA5e6gNeLSbQ5zEJUhZzua78jZMMsUww1MjGEofwBMIWuwM2hRn1KyMfWQyoKg2D8XwMDs3tr8o91ZwfUwHE3uA";
+    public final String bearerToken = "Bearer ya29.a0ARrdaM8dQrO9K6JUbvUvoSOV3LDTr1Ynxwu1V6mLYe8jqHfzn7BPjB2C2hRFpYFn_HaSje0RsrFWK7cKJ5Vulda0X5MG7YPZpACNDaxfrPezxVJy7WUS3xntkX6pqlKktLMek3ybj8CRzkXS8Rx2Rq0HqDukUw";
 
     @Test
     @Order(1)
@@ -100,7 +100,7 @@ class UserIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\"}")
                 .header("Authorization","Bearer badtoken"))
-                .andExpect(content().string(CRest.responseMessage(false,"Token inválido.")));
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
 
     @Test
@@ -110,7 +110,7 @@ class UserIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.user@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(CRest.responseMessage(false,"Correo inválido.")));
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
 
     @Test
@@ -143,9 +143,9 @@ class UserIntegrationTests {
                 .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
                         "\"targetEmail\": \"test.baduser@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(CRest.responseMessage(false,"Usuario no encontrado.")));
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
-    
+
     @Test
     @Order(7)
     void promote() throws Exception{
@@ -176,6 +176,6 @@ class UserIntegrationTests {
                 .content("{\"email\": \""+ CRest.ADMIN_EMAIL+"\", " +
                         "\"targetEmail\": \"test.baduser@gmail.com\"}")
                 .header("Authorization",bearerToken))
-                .andExpect(content().string(CRest.responseMessage(false,"Usuario no encontrado.")));
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
 }
