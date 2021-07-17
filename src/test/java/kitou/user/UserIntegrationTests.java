@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -37,7 +38,7 @@ class UserIntegrationTests {
      * Usar el usuario testkitou@gmail.com para generar el token.
      * Constraseña: q1-w2-e3-r4
      * Ejemplo: "Bearer ya29.a0Raw... */
-    public final String bearerToken = "Bearer ya29.a0ARrdaM_XSlgEnuxOC3uoVxhnWXdb_lzCXalE3PaCkunkGWd3F5dNwcMwmf1dchA90kVSQPM3mjxPqjkcGT2Fyh98FO4Heyb1Q_qJhGVLo-wdU16yRgz3KJrHp4L0LRk0M4Mi5ceFY2p0OI0ZCbitf3ia9S36rw";
+    public final String bearerToken = "Bearer ya29.a0ARrdaM-dGmgndBxi9p7wphNVC0pKp7E52paCVMuixiLLEyTlIjpg2wQxtb3CnVCY7ymbIye9Uk_QBvFWLVsUmJzHxm89AZcl0-9n2ej-9u5hthctkk3u_9akb_Xma6mvQSILnINctnBfB615qFZpxCwwvxtEoQ";
 
     @Test
     @Order(1)
@@ -175,6 +176,57 @@ class UserIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\": \"test.baduser@gmail.com\"}")
                 .header("UserEmail", CRest.ADMIN_EMAIL)
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
+    }
+
+    @Test
+    @Order(10)
+    void badPermissionCondition() throws Exception{
+        mvc.perform(get("/condition")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("UserEmail", "test.user@gmail.com")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
+    }
+
+    @Test
+    @Order(10)
+    void badTokenCondition() throws Exception{
+        mvc.perform(get("/condition")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("UserEmail", CRest.ADMIN_EMAIL)
+                .header("Authorization","Bearer badtoken"))
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
+    }
+
+    @Test
+    @Order(10)
+    void badUserCondition() throws Exception{
+        mvc.perform(get("/condition")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("UserEmail", "baduser")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
+    }
+
+    @Test
+    @Order(12)
+    void badPermissionReport() throws Exception{
+        mvc.perform(get("/report")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("UserEmail", "test.user@gmail.com")
+                .header("Authorization",bearerToken))
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
+    }
+
+    @Test
+    @Order(12)
+    void badPermissionReportCondition() throws Exception{
+        mvc.perform(post("/report")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ciclo\": 1, \"carrera\": \"CS\", \"malla\": 203}")
+                .header("UserEmail", "test.user@gmail.com")
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }

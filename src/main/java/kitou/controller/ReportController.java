@@ -2,14 +2,12 @@ package kitou.controller;
 
 import kitou.business.ReportService;
 import kitou.data.dtos.ConditionDTO;
-import kitou.data.dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/report")
 public class ReportController {
 
     static final Logger logger = Logger.getLogger(ReportController.class.getName());
@@ -17,16 +15,16 @@ public class ReportController {
     @Autowired
     ReportService reportService;
 
-    @PostMapping("/report")
+    @GetMapping("/report")
     public String generateReport(@RequestHeader(name = "Authorization") String accessToken
-            , @RequestBody UserDTO userDTO){
-        return reportService.generateReport(accessToken.substring(7), userDTO);
+            , @RequestHeader(name = "UserEmail") String email){
+        return reportService.generateReport(accessToken.substring(7), email);
     }
 
-    @PostMapping("/reportC")
+    @PostMapping("/report")
     public String generateReport(@RequestHeader(name = "Authorization") String accessToken
-            , @RequestBody UserDTO userDTO
+            , @RequestHeader(name = "UserEmail") String email
             , @RequestBody ConditionDTO conditionDTO){
-        return reportService.generateReport(accessToken.substring(7), userDTO, conditionDTO);
+        return reportService.generateReport(accessToken.substring(7), email, conditionDTO);
     }
 }

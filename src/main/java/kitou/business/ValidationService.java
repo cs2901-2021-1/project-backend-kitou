@@ -21,7 +21,7 @@ public class ValidationService {
 
     static final Logger logger = Logger.getLogger(ValidationService.class.getName());
 
-    public ValidationService validateTokenAndRoleUserless(String accessToken, String email, Role role) throws NotFoundException {
+    public ValidationService validateTokenAndRoleUserless(String accessToken, String email, Role role){
         var user = userRepository.findUserByEmail(email);
         validateToken(accessToken, email);
         validateRole(user.getRole(), role);

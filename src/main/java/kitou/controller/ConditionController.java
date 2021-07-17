@@ -18,7 +18,7 @@ public class ConditionController {
     @GetMapping("/condition")
     @ResponseBody
     public String fetchCondition(@RequestHeader(name = "Authorization") String accessToken
-            , @RequestBody UserDTO userDTO){
-        return conditionService.fetchCondition(accessToken.substring(7), userDTO);
+            , @RequestHeader(name = "UserEmail") String email){
+        return conditionService.fetchCondition(accessToken.substring(7), email);
     }
 }

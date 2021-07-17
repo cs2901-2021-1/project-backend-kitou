@@ -1,8 +1,8 @@
 package kitou.business;
 
-import kitou.data.dtos.UserDTO;
 import kitou.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import kitou.util.CRest;
@@ -17,12 +17,14 @@ public class ConditionService{
     @Autowired
     public ValidationService validationService;
 
-    public String fetchCondition(String accessToken, UserDTO userDTO){
+    public String fetchCondition(String accessToken, String email){
         try{
-            validationService.validateTokenAndRoleUserless(accessToken, userDTO.getEmail(), Role.STANDARD);
-            return new RestTemplate().getForObject(CRest.PREDICTION_URI,String.class);
-        }catch (Exception e){
-            return CRest.responseMessage(false,e.getMessage());
+            validationService.validateTokenAndRoleUserless(accessToken, email, Role.STANDARD);
+            return new RestTemplate().getForObject(CRest.PREDICTION_URI+"/route",String.class);
+        }catch (BadCredentialsException b){
+            return CRest.responseMessage(false,b.getMessage());
+        }catch (Exception u){
+            return CRest.responseMessage(false,"Error al momento de tratar de conseguir la data.");
         }
     }
 }
