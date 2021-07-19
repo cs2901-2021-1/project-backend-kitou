@@ -38,7 +38,7 @@ class UserIntegrationTests {
      * Usar el usuario testkitou@gmail.com para generar el token.
      * Constraseña: q1-w2-e3-r4
      * Ejemplo: "Bearer ya29.a0Raw... */
-    public final String bearerToken = "Bearer ya29.a0ARrdaM9Yrh1JysVYmVVyirMOvwmx_JNWG-jrFaLwfKc1R66RhiITjyGJeukncxW-RtSLErZigpjo74JT84CYD3GAMBRBNY0w9Blc7t23QhnLWKvGdr-XHFWHz3nA21fgDCMwjuV0bDbOr7RJKQWdDjodfT0RAw";
+    public final String bearerToken = "Bearer ya29.a0ARrdaM-KhBqhe0s-_QRwgyfCkRaTowLjniibvAKpzDoSFhIlOv-lnSwl4gePTSvQGa41oUTO9Myvbg-98N_BuVgy-0w9N6ko8beoVKgp1ZO_zF8VaBAXxQARkwaXA0XE10XTp-AlsjmLHauQF76-AyvE5IPbSA";
 
     @Test
     @Order(1)
@@ -60,6 +60,26 @@ class UserIntegrationTests {
                 .header("UserEmail", CRest.ADMIN_EMAIL)
                 .header("Authorization",bearerToken))
                 .andExpect(content().string(CRest.responseMessage(true,"Usuario creado con éxito.")));
+    }
+
+    @Test
+    @Order(3)
+    void getUsers() throws Exception{
+        mvc.perform(get("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("UserEmail", CRest.ADMIN_EMAIL)
+                .header("Authorization",bearerToken))
+                .andExpect(content().string("[{\"role\":2,\"id\":1,\"email\":\"testkitou@gmail.com\"},{\"role\":1,\"id\":2,\"email\":\"test.user@gmail.com\"}]"));
+    }
+
+    @Test
+    @Order(3)
+    void badCredentialsGetUsers() throws Exception{
+        mvc.perform(get("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("UserEmail", CRest.ADMIN_EMAIL)
+                .header("Authorization","Bearer badtoken"))
+                .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
 
     @Test

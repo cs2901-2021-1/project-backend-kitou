@@ -17,6 +17,13 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @GetMapping("/user")
+    @ResponseBody
+    public String getUsers(@RequestHeader(name = "Authorization") String accessToken
+            , @RequestHeader(name = "UserEmail") String email){
+        return userService.getUsers(accessToken.substring(7), email);
+    }
+
     @PostMapping("/login")
     @ResponseBody
     public String login(@RequestHeader(name = "Authorization") String accessToken

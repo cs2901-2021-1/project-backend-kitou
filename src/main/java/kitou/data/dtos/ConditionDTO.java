@@ -28,13 +28,4 @@ public class ConditionDTO {
     public void setMalla(String malla) {
         this.malla = malla;
     }
-
-    @Override
-    public String toString() {
-        return "ConditionDTO{" +
-                "ciclo='" + ciclo + '\'' +
-                ", carrera='" + carrera + '\'' +
-                ", malla='" + malla + '\'' +
-                '}';
-    }
 }

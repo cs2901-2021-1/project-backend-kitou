@@ -5,6 +5,7 @@ import kitou.data.dtos.UserDTO;
 import kitou.data.entities.User;
 import kitou.data.repositories.UserRepository;
 import kitou.util.Role;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,15 @@ public class UserService{
             return user;
         }
             throw new BadCredentialsException("Credenciales inválidas.");
+    }
+
+    public String getUsers(String accessToken, String email){
+        try{
+            validationService.validateTokenAndRoleUserless(accessToken, email, Role.ADMIN);
+            return JSONArray.toJSONString(userRepository.findAll());
+        }catch (Exception e){
+            return CRest.responseMessage(false, e.getMessage());
+        }
     }
 
     public String login(String accessToken, String email){
