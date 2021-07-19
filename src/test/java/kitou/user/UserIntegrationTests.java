@@ -240,26 +240,26 @@ class UserIntegrationTests {
                 .andExpect(content().string(CRest.responseMessage(false,"Credenciales inválidas.")));
     }
 
-    @Test
-    @Order(11)
-    void report() throws Exception{
-        mvc.perform(get("/report")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("UserEmail", CRest.ADMIN_EMAIL)
-                .header("Authorization",bearerToken))
-                .andExpect(content().string("es algo"));
-    }
-
-    @Test
-    @Order(11)
-    void reportCondition() throws Exception{
-        mvc.perform(post("/report")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"ciclo\": 1, \"carrera\": \"CS\", \"malla\": 203}")
-                .header("UserEmail", CRest.ADMIN_EMAIL)
-                .header("Authorization",bearerToken))
-                .andExpect(content().string("salio bien"));
-    }
+//    @Test
+//    @Order(11)
+//    void report() throws Exception{
+//        mvc.perform(get("/report")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .header("UserEmail", CRest.ADMIN_EMAIL)
+//                .header("Authorization",bearerToken))
+//                .andExpect(content().string("es algo"));
+//    }
+//
+//    @Test
+//    @Order(11)
+//    void reportCondition() throws Exception{
+//        mvc.perform(post("/report")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content("{\"ciclo\": 1, \"carrera\": \"CS\", \"malla\": 203}")
+//                .header("UserEmail", CRest.ADMIN_EMAIL)
+//                .header("Authorization",bearerToken))
+//                .andExpect(content().string("salio bien"));
+//    }
 
     @Test
     @Order(12)
