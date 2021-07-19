@@ -28,7 +28,7 @@ public class UserService{
         if(user != null){
             return user;
         }
-            throw new BadCredentialsException("Credenciales inválidas.");
+        throw new BadCredentialsException("Credenciales inválidas.");
     }
 
     public String getUsers(String accessToken, String email){
