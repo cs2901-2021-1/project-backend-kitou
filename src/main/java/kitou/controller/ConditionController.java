@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
+
 @RestController
+@CrossOrigin("*")
 public class ConditionController {
 
     static final Logger logger = Logger.getLogger(ConditionController.class.getName());

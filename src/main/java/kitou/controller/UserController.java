@@ -1,15 +1,16 @@
 package kitou.controller;
 
 import kitou.business.UserService;
-import kitou.util.CRest;
 import kitou.data.dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
-@CrossOrigin("*")
+
+
 @RestController
+@CrossOrigin("*")
 public class UserController {
 
     static final Logger logger = Logger.getLogger(UserController.class.getName());
