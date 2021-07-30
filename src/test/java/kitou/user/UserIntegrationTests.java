@@ -38,7 +38,7 @@ class UserIntegrationTests {
      * Usar el usuario testkitou@gmail.com para generar el token.
      * Constraseña: q1-w2-e3-r4
      * Ejemplo: "Bearer ya29.a0Raw... */
-    public final String bearerToken = "Bearer ya29.a0ARrdaM-HG51kid4zxzUGbf_nnPAbLV8vKTJJfK34j6UME17aBaLg28F3_h3-VUQOuNbh8MIokxCZs-ygCsjXb1SCE9DFFmExtX1n2HgTGhHOO1m2QfZqGeGcPE4cgAgoqkbBE2cNGsKwQtm8w3Cdvif9GQO6cA";
+    public final String bearerToken = "Bearer ya29.a0ARrdaM8R7cyNBdT9zZLrc35AXcFtDhuRPfAqLUdPtpy-dB5IDfmbN2Ic8zQfAGR53EKxOFR-35bCAX02UxMTUKqqjLtpWMJ4Vu6-kVR6NTJDiq_KPMJNK-MJkfnJB_fOYD97roJqmrodxLt58kdBtRAS6eanGA";
 
     @Test
     @Order(1)
