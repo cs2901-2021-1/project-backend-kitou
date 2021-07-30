@@ -22,4 +22,11 @@ public class ConditionController {
             , @RequestHeader(name = "UserEmail") String email){
         return conditionService.fetchCondition(accessToken.substring(7), email);
     }
+
+    @GetMapping("/courses")
+    @ResponseBody
+    public String fetchCourses(@RequestHeader(name = "Authorization") String accessToken
+            , @RequestHeader(name = "UserEmail") String email){
+        return conditionService.fetchCourses(accessToken.substring(7), email);
+    }
 }

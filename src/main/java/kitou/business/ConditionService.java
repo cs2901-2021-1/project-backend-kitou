@@ -27,4 +27,15 @@ public class ConditionService{
             return CRest.responseMessage(false,"Error al momento de tratar de conseguir la data.");
         }
     }
+
+    public String fetchCourses(String accessToken, String email){
+        try{
+            validationService.validateTokenAndRoleUserless(accessToken, email, Role.STANDARD);
+            return new RestTemplate().getForObject(CRest.PREDICTION_URI+"/courses",String.class);
+        }catch (BadCredentialsException b){
+            return CRest.responseMessage(false,b.getMessage());
+        }catch (Exception u){
+            return CRest.responseMessage(false,"Error al momento de tratar de conseguir la data.");
+        }
+    }
 }

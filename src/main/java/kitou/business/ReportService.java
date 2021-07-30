@@ -4,6 +4,8 @@ import kitou.util.CRest;
 import kitou.data.dtos.ConditionDTO;
 import kitou.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,25 +20,25 @@ public class ReportService {
     @Autowired
     public ValidationService validationService;
 
-    public String generateReport(String accessToken, String email){
+    public ResponseEntity<byte[]> generateReport(String accessToken, String email){
         try{
             validationService.validateTokenAndRoleUserless(accessToken, email, Role.STANDARD);
-            return new RestTemplate().getForObject(CRest.PREDICTION_URI+"/report",String.class);
+            return new RestTemplate().getForEntity(CRest.PREDICTION_URI+"/pdf", byte[].class);
         }catch (BadCredentialsException b){
-            return CRest.responseMessage(false,b.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[0]);
         }catch (Exception u){
-            return CRest.responseMessage(false,"Error al momento de tratar de conseguir la data.");
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new byte[0]);
         }
     }
 
-    public String generateReport(String accessToken, String email, ConditionDTO conditionDTO){
+    public ResponseEntity<byte[]> generateReport(String accessToken, String email, ConditionDTO conditionDTO){
         try{
             validationService.validateTokenAndRoleUserless(accessToken, email, Role.STANDARD);
-            return new RestTemplate().postForObject(CRest.PREDICTION_URI+"/report",conditionDTO,String.class);
+            return new RestTemplate().getForEntity(CRest.PREDICTION_URI+"/pdf", byte[].class);
         }catch (BadCredentialsException b){
-            return CRest.responseMessage(false,b.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[0]);
         }catch (Exception u){
-            return CRest.responseMessage(false,"Error al momento de tratar de conseguir la data.");
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new byte[0]);
         }
     }
 }
